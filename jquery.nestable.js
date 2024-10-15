@@ -2,18 +2,16 @@
  * Nestable jQuery Plugin - Copyright (c) 2012 David Bushell - http://dbushell.com/
  * Dual-licensed under the BSD or MIT licenses
  */
-;(function($, window, document, undefined)
-{
-    var hasTouch = 'ontouchstart' in document;
+!(function ($, window, document, undefined) {
+    let hasTouch = 'ontouchstart' in document;
 
     /**
      * Detect CSS pointer-events property
      * events are normally disabled on the dragging element to avoid conflicts
      * https://github.com/ausi/Feature-detection-technique-for-pointer-events/blob/master/modernizr-pointerevents.js
      */
-    var hasPointerEvents = (function()
-    {
-        var el    = document.createElement('div'),
+    let hasPointerEvents = (function () {
+        let el = document.createElement('div'),
             docEl = document.documentElement;
         if (!('pointerEvents' in el.style)) {
             return false;
@@ -21,61 +19,57 @@
         el.style.pointerEvents = 'auto';
         el.style.pointerEvents = 'x';
         docEl.appendChild(el);
-        var supports = window.getComputedStyle && window.getComputedStyle(el, '').pointerEvents === 'auto';
+        let supports = window.getComputedStyle && window.getComputedStyle(el, '').pointerEvents === 'auto';
         docEl.removeChild(el);
         return !!supports;
     })();
 
-    var defaults = {
-            listNodeName    : 'ol',
-            itemNodeName    : 'li',
-            rootClass       : 'dd',
-            listClass       : 'dd-list',
-            itemClass       : 'dd-item',
-            dragClass       : 'dd-dragel',
-            handleClass     : 'dd-handle',
-            collapsedClass  : 'dd-collapsed',
-            placeClass      : 'dd-placeholder',
-            noDragClass     : 'dd-nodrag',
-            emptyClass      : 'dd-empty',
-            expandBtnHTML   : '<button data-action="expand" type="button">Expand</button>',
-            collapseBtnHTML : '<button data-action="collapse" type="button">Collapse</button>',
-            group           : 0,
-            maxDepth        : 5,
-            threshold       : 20
-        };
+    let defaults = {
+        listNodeName: 'ol',
+        itemNodeName: 'li',
+        listClass: 'dd-list',
+        itemClass: 'dd-item',
+        dragClass: 'dd-dragel',
+        handleClass: 'dd-handle',
+        collapsedClass: 'dd-collapsed',
+        placeClass: 'dd-placeholder',
+        noDragClass: 'dd-nodrag',
+        emptyClass: 'dd-empty',
+        expandBtnHTML: '<button data-action="expand" type="button">Expand</button>',
+        collapseBtnHTML: '<button data-action="collapse" type="button">Collapse</button>',
+        group: 0,
+        maxDepth: 5,
+        threshold: 20
+    };
 
-    function Plugin(element, options)
-    {
-        this.w  = $(document);
-        this.el = $(element);
-        this.options = $.extend({}, defaults, options);
-        this.init();
-    }
+    class Plugin {
+        constructor(element, options) {
+            this.w = $(document);
+            this.el = $(element);
+            this.options = $.extend({}, defaults, options);
+            this.init();
+        }
 
-    Plugin.prototype = {
-
-        init: function()
-        {
-            var list = this;
+        init() {
+            let list = this;
 
             list.reset();
 
             list.el.data('nestable-group', this.options.group);
 
-            list.placeEl = $('<div class="' + list.options.placeClass + '"/>');
+            list.placeEl = $(`<div class="${list.options.placeClass}"/>`);
 
-            $.each(this.el.find(list.options.itemNodeName), function(k, el) {
+            $.each(this.el.find(list.options.itemNodeName), function (k, el) {
                 list.setParent($(el));
             });
 
-            list.el.on('click', 'button', function(e) {
+            list.el.on('click', 'button', function (e) {
                 if (list.dragEl) {
                     return;
                 }
-                var target = $(e.currentTarget),
+                let target = $(e.currentTarget),
                     action = target.data('action'),
-                    item   = target.parent(list.options.itemNodeName);
+                    item = target.parent(list.options.itemNodeName);
                 if (action === 'collapse') {
                     list.collapseItem(item);
                 }
@@ -84,9 +78,8 @@
                 }
             });
 
-            var onStartEvent = function(e)
-            {
-                var handle = $(e.target);
+            let onStartEvent = function (e) {
+                let handle = $(e.target);
                 if (!handle.hasClass(list.options.handleClass)) {
                     if (handle.closest('.' + list.options.noDragClass).length) {
                         return;
@@ -107,16 +100,14 @@
                 list.dragStart(e.touches ? e.touches[0] : e);
             };
 
-            var onMoveEvent = function(e)
-            {
+            let onMoveEvent = function (e) {
                 if (list.dragEl) {
                     e.preventDefault();
                     list.dragMove(e.touches ? e.touches[0] : e);
                 }
             };
 
-            var onEndEvent = function(e)
-            {
+            let onEndEvent = function (e) {
                 if (list.dragEl) {
                     e.preventDefault();
                     list.dragStop(e.touches ? e.touches[0] : e);
@@ -134,123 +125,111 @@
             list.w.on('mousemove', onMoveEvent);
             list.w.on('mouseup', onEndEvent);
 
-        },
+        }
 
-        serialize: function()
-        {
-            var data,
+        serialize() {
+            let data,
                 depth = 0,
-                list  = this;
-                step  = function(level, depth)
-                {
-                    var array = [ ],
-                        items = level.children(list.options.itemNodeName);
-                    items.each(function()
-                    {
-                        var li   = $(this),
-                            item = $.extend({}, li.data()),
-                            sub  = li.children(list.options.listNodeName);
-                        if (sub.length) {
-                            item.children = step(sub, depth + 1);
-                        }
-                        array.push(item);
-                    });
-                    return array;
-                };
+                list = this;
+            step = function (level, depth) {
+                let array = [],
+                    items = level.children(list.options.itemNodeName);
+                items.each(function () {
+                    let li = $(this),
+                        item = $.extend({}, li.data()),
+                        sub = li.children(list.options.listNodeName);
+                    if (sub.length) {
+                        item.children = step(sub, depth + 1);
+                    }
+                    array.push(item);
+                });
+                return array;
+            };
             data = step(list.el.find(list.options.listNodeName).first(), depth);
             return data;
-        },
+        }
 
-        serialise: function()
-        {
+        serialise() {
             return this.serialize();
-        },
+        }
 
-        reset: function()
-        {
+        reset() {
             this.mouse = {
-                offsetX   : 0,
-                offsetY   : 0,
-                startX    : 0,
-                startY    : 0,
-                lastX     : 0,
-                lastY     : 0,
-                nowX      : 0,
-                nowY      : 0,
-                distX     : 0,
-                distY     : 0,
-                dirAx     : 0,
-                dirX      : 0,
-                dirY      : 0,
-                lastDirX  : 0,
-                lastDirY  : 0,
-                distAxX   : 0,
-                distAxY   : 0
+                offsetX: 0,
+                offsetY: 0,
+                startX: 0,
+                startY: 0,
+                lastX: 0,
+                lastY: 0,
+                nowX: 0,
+                nowY: 0,
+                distX: 0,
+                distY: 0,
+                dirAx: 0,
+                dirX: 0,
+                dirY: 0,
+                lastDirX: 0,
+                lastDirY: 0,
+                distAxX: 0,
+                distAxY: 0
             };
-            this.isTouch    = false;
-            this.moving     = false;
-            this.dragEl     = null;
+            this.isTouch = false;
+            this.moving = false;
+            this.dragEl = null;
             this.dragRootEl = null;
-            this.dragDepth  = 0;
+            this.dragDepth = 0;
             this.hasNewRoot = false;
-            this.pointEl    = null;
-        },
+            this.pointEl = null;
+        }
 
-        expandItem: function(li)
-        {
+        expandItem(li) {
             li.removeClass(this.options.collapsedClass);
             li.children('[data-action="expand"]').hide();
             li.children('[data-action="collapse"]').show();
             li.children(this.options.listNodeName).show();
-        },
+        }
 
-        collapseItem: function(li)
-        {
-            var lists = li.children(this.options.listNodeName);
+        collapseItem(li) {
+            let lists = li.children(this.options.listNodeName);
             if (lists.length) {
                 li.addClass(this.options.collapsedClass);
                 li.children('[data-action="collapse"]').hide();
                 li.children('[data-action="expand"]').show();
                 li.children(this.options.listNodeName).hide();
             }
-        },
+        }
 
-        expandAll: function()
-        {
-            var list = this;
-            list.el.find(list.options.itemNodeName).each(function() {
+        expandAll() {
+            let list = this;
+            list.el.find(list.options.itemNodeName).each(function () {
                 list.expandItem($(this));
             });
-        },
+        }
 
-        collapseAll: function()
-        {
-            var list = this;
-            list.el.find(list.options.itemNodeName).each(function() {
+        collapseAll() {
+            let list = this;
+            list.el.find(list.options.itemNodeName).each(function () {
                 list.collapseItem($(this));
             });
-        },
+        }
 
-        setParent: function(li)
-        {
+        setParent(li) {
             if (li.children(this.options.listNodeName).length) {
                 li.prepend($(this.options.expandBtnHTML));
                 li.prepend($(this.options.collapseBtnHTML));
             }
             li.children('[data-action="expand"]').hide();
-        },
+        }
 
-        unsetParent: function(li)
-        {
+        unsetParent(li) {
             li.removeClass(this.options.collapsedClass);
             li.children('[data-action]').remove();
             li.children(this.options.listNodeName).remove();
-        },
+        }
 
-        dragStart: function(e)
-        {
-            var mouse    = this.mouse,
-                target   = $(e.target),
+        dragStart(e) {
+            let mouse = this.mouse,
+                target = $(e.target),
                 dragItem = target.closest(this.options.itemNodeName);
 
             this.placeEl.css('height', dragItem.height());
@@ -271,11 +250,11 @@
 
             $(document.body).append(this.dragEl);
             this.dragEl.css({
-                'left' : e.pageX - mouse.offsetX,
-                'top'  : e.pageY - mouse.offsetY
+                'left': e.pageX - mouse.offsetX,
+                'top': e.pageY - mouse.offsetY
             });
             // total depth of dragging item
-            var i, depth,
+            let i, depth,
                 items = this.dragEl.find(this.options.itemNodeName);
             for (i = 0; i < items.length; i++) {
                 depth = $(items[i]).parents(this.options.listNodeName).length;
@@ -283,11 +262,10 @@
                     this.dragDepth = depth;
                 }
             }
-        },
+        }
 
-        dragStop: function(e)
-        {
-            var el = this.dragEl.children(this.options.itemNodeName).first();
+        dragStop(e) {
+            let el = this.dragEl.children(this.options.itemNodeName).first();
             el[0].parentNode.removeChild(el[0]);
             this.placeEl.replaceWith(el);
 
@@ -297,25 +275,26 @@
                 this.dragRootEl.trigger('change');
             }
             this.reset();
-        },
+        }
 
-        dragMove: function(e)
-        {
-            var list, parent, prev, next, depth,
-                opt   = this.options,
+        dragMove(e) {
+            let list, parent, prev, next, depth,
+                opt = this.options,
                 mouse = this.mouse;
 
             this.dragEl.css({
-                'left' : e.pageX - mouse.offsetX,
-                'top'  : e.pageY - mouse.offsetY
+                'left': e.pageX - mouse.offsetX,
+                'top': e.pageY - mouse.offsetY
             });
+
+            let isEmpty = false;
 
             // mouse position last events
             mouse.lastX = mouse.nowX;
             mouse.lastY = mouse.nowY;
             // mouse position this events
-            mouse.nowX  = e.pageX;
-            mouse.nowY  = e.pageY;
+            mouse.nowX = e.pageX;
+            mouse.nowY = e.pageY;
             // distance mouse moved between events
             mouse.distX = mouse.nowX - mouse.lastX;
             mouse.distY = mouse.nowY - mouse.lastY;
@@ -326,11 +305,11 @@
             mouse.dirX = mouse.distX === 0 ? 0 : mouse.distX > 0 ? 1 : -1;
             mouse.dirY = mouse.distY === 0 ? 0 : mouse.distY > 0 ? 1 : -1;
             // axis mouse is now moving on
-            var newAx   = Math.abs(mouse.distX) > Math.abs(mouse.distY) ? 1 : 0;
+            let newAx = Math.abs(mouse.distX) > Math.abs(mouse.distY) ? 1 : 0;
 
             // do nothing on first move
             if (!mouse.moving) {
-                mouse.dirAx  = newAx;
+                mouse.dirAx = newAx;
                 mouse.moving = true;
                 return;
             }
@@ -392,19 +371,21 @@
                 }
             }
 
-            var isEmpty = false;
-
             // find list item under cursor
             if (!hasPointerEvents) {
                 this.dragEl[0].style.visibility = 'hidden';
             }
-            this.pointEl = $(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
+
             if (!hasPointerEvents) {
                 this.dragEl[0].style.visibility = 'visible';
             }
+
+            this.pointEl = $(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.scrollY || document.documentElement.scrollTop)));
+
             if (this.pointEl.hasClass(opt.handleClass)) {
                 this.pointEl = this.pointEl.parent(opt.itemNodeName);
             }
+
             if (this.pointEl.hasClass(opt.emptyClass)) {
                 isEmpty = true;
             }
@@ -413,8 +394,8 @@
             }
 
             // find parent list of item under cursor
-            var pointElRoot = this.pointEl.closest('.' + opt.rootClass),
-                isNewRoot   = this.dragRootEl.data('nestable-id') !== pointElRoot.data('nestable-id');
+            let pointElRoot = this.pointEl.closest('div'),
+                isNewRoot = this.dragRootEl.data('nestable-id') !== pointElRoot.data('nestable-id');
 
             /**
              * move vertical
@@ -424,13 +405,17 @@
                 if (isNewRoot && opt.group !== pointElRoot.data('nestable-group')) {
                     return;
                 }
+
                 // check depth limit
                 depth = this.dragDepth - 1 + this.pointEl.parents(opt.listNodeName).length;
+
                 if (depth > opt.maxDepth) {
                     return;
                 }
-                var before = e.pageY < (this.pointEl.offset().top + this.pointEl.height() / 2);
-                    parent = this.placeEl.parent();
+
+                let before = e.pageY < (this.pointEl.offset().top + this.pointEl.height() / 2);
+                parent = this.placeEl.parent();
+
                 // if empty create new list to replace empty placeholder
                 if (isEmpty) {
                     list = $(document.createElement(opt.listNodeName)).addClass(opt.listClass);
@@ -443,12 +428,15 @@
                 else {
                     this.pointEl.after(this.placeEl);
                 }
+
                 if (!parent.children().length) {
                     this.unsetParent(parent.parent());
                 }
+
                 if (!this.dragRootEl.find(opt.itemNodeName).length) {
-                    this.dragRootEl.append('<div class="' + opt.emptyClass + '"/>');
+                    this.dragRootEl.append(`<div class="${opt.emptyClass}"/>`);
                 }
+
                 // parent root list has changed
                 if (isNewRoot) {
                     this.dragRootEl = pointElRoot;
@@ -456,17 +444,14 @@
                 }
             }
         }
-
     };
 
-    $.fn.nestable = function(params)
-    {
-        var lists  = this,
+    $.fn.nestable = function (params) {
+        let lists = this,
             retval = this;
 
-        lists.each(function()
-        {
-            var plugin = $(this).data("nestable");
+        lists.each(function () {
+            let plugin = $(this).data("nestable");
 
             if (!plugin) {
                 $(this).data("nestable", new Plugin(this, params));
@@ -480,5 +465,4 @@
 
         return retval || lists;
     };
-
 })(window.jQuery || window.Zepto, window, document);
