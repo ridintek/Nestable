@@ -9,57 +9,60 @@ Nestable
 
 ### Drag & drop hierarchical list with mouse and touch compatibility (jQuery / Zepto plugin)
 
-[**Try Nestable Demo**](http://dbushell.github.com/Nestable/)
-
 Nestable is an experimental example and not under active development. If it suits your requirements feel free to expand upon it!
 
 ## Usage
 
-Write your nested HTML lists like so:
+Write your nested HTML lists like so (And now you can ommit parent `class="dd"`):
 
-    <div class="dd">
-        <ol class="dd-list">
-            <li class="dd-item" data-id="1">
-                <div class="dd-handle">Item 1</div>
-            </li>
-            <li class="dd-item" data-id="2">
-                <div class="dd-handle">Item 2</div>
-            </li>
-            <li class="dd-item" data-id="3">
-                <div class="dd-handle">Item 3</div>
-                <ol class="dd-list">
-                    <li class="dd-item" data-id="4">
-                        <div class="dd-handle">Item 4</div>
-                    </li>
-                    <li class="dd-item" data-id="5">
-                        <div class="dd-handle">Item 5</div>
-                    </li>
-                </ol>
-            </li>
-        </ol>
-    </div>
-
+```HTML
+<div class="dd">
+    <ol class="dd-list">
+        <li class="dd-item" data-id="1">
+            <div class="dd-handle">Item1</div>
+        </li>
+        <li class="dd-item" data-id="2">
+            <div class="dd-handle">Item2</div>
+        </li>
+        <li class="dd-item" data-id="3">
+            <div class="dd-handle">Item3</div>
+            <ol class="dd-list">
+                <li class="dd-item"data-id="4">
+                    <div class="dd-handle">Item 4</div>
+                </li>
+                <li class="dd-item"data-id="5">
+                    <div class="dd-handle">Item 5</div>
+                </li>
+            </ol>
+        </li>
+    </ol>
+</div>
+```
 Then activate with jQuery like so:
-
+```js
     $('.dd').nestable({ /* config options */ });
+```
 
 ### Events
 
 The `change` event is fired when items are reordered.
-
+```js
     $('.dd').on('change', function() {
         /* on change event */
     });
+```
 
 ### Methods
 
 You can get a serialised object with all `data-*` attributes for each item.
-
+```js
     $('.dd').nestable('serialize');
+```
 
 The serialised JSON for the example above would be:
-
-    [{"id":1},{"id":2},{"id":3,"children":[{"id":4},{"id":5}]}]
+```json
+[{"id":1},{"id":2},{"id":3,"children":[{"id":4},{"id":5}]}]
+```
 
 ### Configuration
 
@@ -72,7 +75,6 @@ These advanced config options are also available:
 
 * `listNodeName` The HTML element to create for lists (default `'ol'`)
 * `itemNodeName` The HTML element to create for list items (default `'li'`)
-* `rootClass` The class of the root element `.nestable()` was used on (default `'dd'`)
 * `listClass` The class of all list elements (default `'dd-list'`)
 * `itemClass` The class of all list item elements (default `'dd-item'`)
 * `dragClass` The class applied to the list element that is being dragged (default `'dd-dragel'`)
@@ -83,9 +85,12 @@ These advanced config options are also available:
 * `expandBtnHTML` The HTML text used to generate a list item expand button (default `'<button data-action="expand">Expand></button>'`)
 * `collapseBtnHTML` The HTML text used to generate a list item collapse button (default `'<button data-action="collapse">Collapse</button>'`)
 
-**Inspect the [Nestable Demo](http://dbushell.github.com/Nestable/) for guidance.**
-
 ## Change Log
+
+### 15th October 2024
+
+* Improve dynamic root without mandatory class `dd`, so you can wrap `<ol class="dd-list">` with `<div>` only.
+* Improve syntax.
 
 ### 15th October 2012
 
