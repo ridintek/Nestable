@@ -328,12 +328,13 @@
                     mouse.distAxY = 0;
                 }
             }
+
             mouse.dirAx = newAx;
 
             /**
              * move horizontal
              */
-            if (mouse.dirAx && mouse.distAxX >= opt.threshold) {
+            if (mouse.dirAx && (mouse.distAxX >= opt.threshold)) {
                 // reset move distance on x-axis for new phase
                 mouse.distAxX = 0;
                 prev = this.placeEl.prev(opt.itemNodeName);
@@ -346,7 +347,7 @@
                     if (depth + this.dragDepth <= opt.maxDepth) {
                         // create new sub-level if one doesn't exist
                         if (!list.length) {
-                            list = $('<' + opt.listNodeName + '/>').addClass(opt.listClass);
+                            list = $(`<${opt.listNodeName}/>`).addClass(opt.listClass);
                             list.append(this.placeEl);
                             prev.append(list);
                             this.setParent(prev);
