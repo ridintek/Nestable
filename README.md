@@ -13,7 +13,7 @@ Nestable is an experimental example and not under active development. If it suit
 
 ## Usage
 
-Write your nested HTML lists like so (And now you can ommit parent `class="dd"`):
+Write your nested HTML lists like so (And now you can ommit the parent `class="dd"` below):
 
 ```HTML
 <div class="dd">
@@ -27,10 +27,10 @@ Write your nested HTML lists like so (And now you can ommit parent `class="dd"`)
         <li class="dd-item" data-id="3">
             <div class="dd-handle">Item3</div>
             <ol class="dd-list">
-                <li class="dd-item"data-id="4">
+                <li class="dd-item" data-id="4">
                     <div class="dd-handle">Item 4</div>
                 </li>
-                <li class="dd-item"data-id="5">
+                <li class="dd-item" data-id="5">
                     <div class="dd-handle">Item 5</div>
                 </li>
             </ol>
