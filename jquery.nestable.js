@@ -25,31 +25,32 @@
         docEl.removeChild(el);
 
         return !!supports;
-    })();
-
-    let defaults = {
-        listNodeName: 'ol',
-        itemNodeName: 'li',
-        listClass: 'dd-list',
-        itemClass: 'dd-item',
-        dragClass: 'dd-dragel',
-        handleClass: 'dd-handle',
-        collapsedClass: 'dd-collapsed',
-        placeClass: 'dd-placeholder',
-        noDragClass: 'dd-nodrag',
-        emptyClass: 'dd-empty',
-        expandBtnHTML: '<button data-action="expand" type="button">Expand</button>',
-        collapseBtnHTML: '<button data-action="collapse" type="button">Collapse</button>',
-        group: 0,
-        maxDepth: 5,
-        threshold: 20
-    };
+    }());
 
     class Plugin {
-        constructor(element, options) {
+        // Default options
+        options = {
+            listNodeName: 'ol',
+            itemNodeName: 'li',
+            listClass: 'dd-list',
+            itemClass: 'dd-item',
+            dragClass: 'dd-dragel',
+            handleClass: 'dd-handle',
+            collapsedClass: 'dd-collapsed',
+            placeClass: 'dd-placeholder',
+            noDragClass: 'dd-nodrag',
+            emptyClass: 'dd-empty',
+            expandBtnHTML: '<button data-action="expand" type="button">Expand</button>',
+            collapseBtnHTML: '<button data-action="collapse" type="button">Collapse</button>',
+            group: 0,
+            maxDepth: 5,
+            threshold: 20
+        }
+
+        constructor(element, options = {}) {
             this.w = $(document);
             this.el = $(element);
-            this.options = $.extend({}, defaults, options);
+            this.options = { ...this.options, ...options };
             this.init();
         }
 
@@ -144,7 +145,7 @@
 
                 items.each(function () {
                     let li = $(this);
-                    let item = $.extend({}, li[0].dataset);
+                    let item = { ...li[0].dataset };
                     let sub = li.children(list.options.listNodeName);
 
                     if (sub.length) {
@@ -250,6 +251,7 @@
             let dragItem = target.closest(this.options.itemNodeName);
 
             this.placeEl.css('height', dragItem.height());
+            this.el.trigger('dragstart');
 
             mouse.offsetX = e.offsetX !== undefined ? e.offsetX : e.pageX - target.offset().left;
             mouse.offsetY = e.offsetY !== undefined ? e.offsetY : e.pageY - target.offset().top;
@@ -294,6 +296,7 @@
 
             this.dragEl.remove();
             this.el.trigger('change');
+            this.el.trigger('dragstop');
 
             if (this.hasNewRoot) {
                 this.dragRootEl.trigger('change');
@@ -310,6 +313,8 @@
             let depth;
             let opt = this.options;
             let mouse = this.mouse;
+
+            this.el.trigger('dragmove');
 
             this.dragEl.css({
                 'left': e.pageX - mouse.offsetX,
