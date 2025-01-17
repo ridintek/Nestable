@@ -18,19 +18,19 @@ Write your nested HTML lists like so (And now you can ommit the parent `class="d
 ```HTML
 <div class="dd">
     <ol class="dd-list">
-        <li class="dd-item" data-id="1">
+        <li class="dd-item" data-id="1" data-name="Alifah">
             <div class="dd-handle">Item1</div>
         </li>
-        <li class="dd-item" data-id="2">
+        <li class="dd-item" data-id="2" data-name="Hamzah">
             <div class="dd-handle">Item2</div>
         </li>
-        <li class="dd-item" data-id="3">
+        <li class="dd-item" data-id="3" data-name="Royyan">
             <div class="dd-handle">Item3</div>
             <ol class="dd-list">
-                <li class="dd-item" data-id="4">
+                <li class="dd-item" data-weight="100">
                     <div class="dd-handle">Item 4</div>
                 </li>
-                <li class="dd-item" data-id="5">
+                <li class="dd-item" data-custom-attributes="yes">
                     <div class="dd-handle">Item 5</div>
                 </li>
             </ol>
@@ -45,13 +45,33 @@ Then activate with jQuery like so:
 
 ### Events
 
-The `change` event is fired when items are reordered.
+Event `change` is fired when the item is released.
 ```js
     $('.dd').on('change', function() {
         /* on change event */
     });
 ```
 
+Event `dragstart` is fired when the item begin to move.
+```js
+    $('.dd').on('dragstart', function() {
+        /* on dragstart event */
+    });
+```
+
+Event `dragmove` is fired when the item is moving.
+```js
+    $('.dd').on('dragmove', function() {
+        /* on dragmove event */
+    });
+```
+
+Event `dragstop` is fired when the item is released.
+```js
+    $('.dd').on('dragstop', function() {
+        /* on dragstop event */
+    });
+```
 ### Methods
 
 You can get a serialised object with all `data-*` attributes for each item.
@@ -61,7 +81,25 @@ You can get a serialised object with all `data-*` attributes for each item.
 
 The serialised JSON for the example above would be:
 ```json
-[{"id":1},{"id":2},{"id":3,"children":[{"id":4},{"id":5}]}]
+[
+    {
+        "id": 1,
+        "name": "Alifah"
+    }, {
+        "id": 2,
+        "name": "Hamzah"
+    }, {
+        "id": 3,
+        "name": "Royyan",
+        "children": [
+            {
+                "weight": 100
+            }, {
+                "customAttributes": "yes"
+            }
+        ]
+    }
+]
 ```
 
 ### Configuration
@@ -86,6 +124,10 @@ These advanced config options are also available:
 * `collapseBtnHTML` The HTML text used to generate a list item collapse button (default `'<button data-action="collapse">Collapse</button>'`)
 
 ## Change Log
+
+### 17th January 2025
+* New events `dragstart`, `dragmove` and `dragstop`.
+* Improve options method.
 
 ### 15th October 2024
 
